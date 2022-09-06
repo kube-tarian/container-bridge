@@ -9,6 +9,7 @@ stop-docker-compose:
 	docker compose down -v
 
 build:
+	go mod vendor
 	go build -o build/client client/main.go
 	go build -o build/agent agent/main.go
 
