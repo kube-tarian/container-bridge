@@ -46,7 +46,7 @@ services:
     entrypoint: "/agent"
     build:
       context: ./
-      dockerfile: Dockerfile.agent
+      dockerfile: dockerfiles/agent/Dockerfile
     restart: always
     environment:
       NATS_TOKEN: "UfmrJOYwYCCsgQvxvcfJ3BdI6c8WBbnD"
@@ -65,7 +65,7 @@ services:
     entrypoint: "/client"
     build:
       context: ./
-      dockerfile: Dockerfile.client
+      dockerfile: dockerfiles/client/Dockerfile
     restart: always
     environment:
       NATS_TOKEN: "UfmrJOYwYCCsgQvxvcfJ3BdI6c8WBbnD"
