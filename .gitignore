@@ -1,3 +1,4 @@
 vendor
 build
 ch_server_db
+.tools
