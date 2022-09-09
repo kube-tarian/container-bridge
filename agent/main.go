@@ -1,32 +1,15 @@
 package main
 
 import (
-	"log"
 	"os"
 	"os/signal"
 	"syscall"
 
 	"github.com/kube-tarian/container-bridge/agent/pkg/application"
-	"github.com/kube-tarian/container-bridge/agent/pkg/clients"
-	"github.com/kube-tarian/container-bridge/agent/pkg/config"
-
-	"github.com/kelseyhightower/envconfig"
 )
 
 func main() {
-	cfg := &config.Config{}
-	if err := envconfig.Process("", cfg); err != nil {
-		log.Fatalf("Could not parse env Config: %v", err)
-	}
-
-	// Connect to NATS
-	natsContext, err := clients.NewNATSContext(cfg)
-	if err != nil {
-		log.Fatal("Error establishing connection to NATS:", err)
-	}
-
-	app := application.New(cfg, natsContext)
-
+	app := application.New()
 	go app.Start()
 
 	signals := make(chan os.Signal, 1)

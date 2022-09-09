@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/kelseyhightower/envconfig"
 	"github.com/kube-tarian/container-bridge/client/pkg/clickhouse"
 	"github.com/kube-tarian/container-bridge/client/pkg/clients"
 	"github.com/kube-tarian/container-bridge/client/pkg/config"
@@ -22,9 +23,25 @@ type Application struct {
 	dbClient   *clickhouse.DBClient
 }
 
-func New(conf *config.Config, conn *clients.NATSContext, dbClient *clickhouse.DBClient) *Application {
+func New() *Application {
+	cfg := &config.Config{}
+	if err := envconfig.Process("", cfg); err != nil {
+		log.Fatalf("Could not parse env Config: %v", err)
+	}
+
+	dbClient, err := clickhouse.NewDBClient(cfg)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Connect to NATS
+	natsContext, err := clients.NewNATSContext(cfg, dbClient)
+	if err != nil {
+		log.Fatal("Error establishing connection to NATS:", err)
+	}
+
 	log.Println("Initializing Application")
-	apiServer, err := handler.NewAPIHandler(conn)
+	apiServer, err := handler.NewAPIHandler(natsContext)
 	if err != nil {
 		log.Fatalf("API Handler initialisation failed: %v", err)
 	}
@@ -33,13 +50,13 @@ func New(conf *config.Config, conn *clients.NATSContext, dbClient *clickhouse.DB
 	apiServer.BindRequest(mux)
 
 	httpServer := &http.Server{
-		Addr:    fmt.Sprintf("0.0.0.0:%d", conf.Port),
+		Addr:    fmt.Sprintf("0.0.0.0:%d", cfg.Port),
 		Handler: mux,
 	}
 
 	return &Application{
-		Config:     conf,
-		conn:       conn,
+		Config:     cfg,
+		conn:       natsContext,
 		dbClient:   dbClient,
 		apiServer:  apiServer,
 		httpServer: httpServer,

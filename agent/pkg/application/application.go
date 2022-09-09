@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/kelseyhightower/envconfig"
 	"github.com/kube-tarian/container-bridge/agent/pkg/clients"
 	"github.com/kube-tarian/container-bridge/agent/pkg/config"
 	"github.com/kube-tarian/container-bridge/agent/pkg/handler"
@@ -20,8 +21,19 @@ type Application struct {
 	httpServer *http.Server
 }
 
-func New(conf *config.Config, conn *clients.NATSContext) *Application {
-	apiServer, err := handler.NewAPIHandler(conn)
+func New() *Application {
+	cfg := &config.Config{}
+	if err := envconfig.Process("", cfg); err != nil {
+		log.Fatalf("Could not parse env Config: %v", err)
+	}
+
+	// Connect to NATS
+	natsContext, err := clients.NewNATSContext(cfg)
+	if err != nil {
+		log.Fatal("Error establishing connection to NATS:", err)
+	}
+
+	apiServer, err := handler.NewAPIHandler(natsContext)
 	if err != nil {
 		log.Fatalf("API Handler initialisation failed: %v", err)
 	}
@@ -30,13 +42,13 @@ func New(conf *config.Config, conn *clients.NATSContext) *Application {
 	apiServer.BindRequest(mux)
 
 	httpServer := &http.Server{
-		Addr:    fmt.Sprintf("0.0.0.0:%d", conf.Port),
+		Addr:    fmt.Sprintf("0.0.0.0:%d", cfg.Port),
 		Handler: mux,
 	}
 
 	return &Application{
-		Config:     conf,
-		conn:       conn,
+		Config:     cfg,
+		conn:       natsContext,
 		apiServer:  apiServer,
 		httpServer: httpServer,
 	}
