@@ -10,11 +10,11 @@ import (
 	"github.com/nats-io/nats.go"
 )
 
-//constant variables to use with nats stream and
+// constant variables to use with nats stream and
 // nats publishing
 const (
-	streamSubjects = "GITMETRICS.*"
-	eventSubject   = "GITMETRICS.git"
+	streamSubjects = "CONTAINERMETRICS.*"
+	eventSubject   = "CONTAINERMETRICS.git"
 )
 
 type NATSContext struct {
@@ -88,12 +88,6 @@ func (n *NATSContext) Close() {
 }
 
 func (n *NATSContext) Publish(event []byte, repo string) error {
-	// eventJSON, err := json.Marshal(event)
-	// if err != nil {
-	// 	return err
-	// }
-	// _, err := n.stream.Publish(eventSubject, event)
-
 	msg := nats.NewMsg(eventSubject)
 	msg.Data = event
 	msg.Header.Set("REPO_NAME", repo)

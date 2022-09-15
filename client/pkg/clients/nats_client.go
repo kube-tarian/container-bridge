@@ -11,12 +11,12 @@ import (
 	"github.com/nats-io/nats.go"
 )
 
-//constant variables to use with nats stream and
+// constant variables to use with nats stream and
 // nats publishing
 const (
-	streamSubjects string = "GITMETRICS.*"
-	eventSubject   string = "GITMETRICS.git"
-	eventConsumer  string = "Git-Consumer"
+	streamSubjects string = "CONTAINERMETRICS.*"
+	eventSubject   string = "CONTAINERMETRICS.git"
+	eventConsumer  string = "container-event-consumer"
 )
 
 type NATSContext struct {
@@ -50,7 +50,7 @@ func NewNATSContext(conf *config.Config, dbClient *clickhouse.DBClient) (*NATSCo
 	ctx.stream = stream
 	ctx.Subscribe(eventSubject, eventConsumer, dbClient)
 
-	_, err = stream.StreamInfo("GITMETRICS")
+	_, err = stream.StreamInfo("CONTAINERMETRICS")
 	if err != nil {
 		return nil, err
 	}
@@ -100,6 +100,14 @@ func (n *NATSContext) Subscribe(subject string, consumer string, conn *clickhous
 					eventsJSON = msg.Data
 				}
 				conn.InsertEvent(string(eventsJSON))
+
+				if n.conf.TemporalEnabled {
+					// Currently temporal workflow is not yet supported
+					// Once it is supported the idea here is to trigger job in the workflow
+					log.Println(`Currently temporal workflow is not yet supported!!!\n 
+					Once it is supported the idea here is to trigger job in the workflow for this event,
+					 for example to retrieve more information for the event!!!`)
+				}
 			}
 		} else {
 			log.Printf("Failed to unmarshal event, %v", err)
