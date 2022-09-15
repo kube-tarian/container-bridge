@@ -52,7 +52,7 @@ services:
       NATS_TOKEN: "UfmrJOYwYCCsgQvxvcfJ3BdI6c8WBbnD"
       NATS_ADDRESS: "nats://nats:4222"
       PORT: "8090"
-      STREAM_NAME: "GITMETRICS"
+      STREAM_NAME: "CONTAINERMETRICS"
     ports:
       - "8090:8090"
     # depends_on:
@@ -72,7 +72,7 @@ services:
       NATS_ADDRESS: "nats://nats:4222"
       DB_ADDRESS: "ch_server:9000"
       PORT: "8091"
-      STREAM_NAME: "GITMETRICS"
+      STREAM_NAME: "CONTAINERMETRICS"
     ports:
       - "8091:8091"
     # depends_on:

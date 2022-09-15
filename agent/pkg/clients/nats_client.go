@@ -13,8 +13,8 @@ import (
 // constant variables to use with nats stream and
 // nats publishing
 const (
-	streamSubjects = "GITMETRICS.*"
-	eventSubject   = "GITMETRICS.git"
+	streamSubjects = "CONTAINERMETRICS.*"
+	eventSubject   = "CONTAINERMETRICS.git"
 )
 
 type NATSContext struct {

@@ -14,9 +14,9 @@ import (
 // constant variables to use with nats stream and
 // nats publishing
 const (
-	streamSubjects string = "GITMETRICS.*"
-	eventSubject   string = "GITMETRICS.git"
-	eventConsumer  string = "Git-Consumer"
+	streamSubjects string = "CONTAINERMETRICS.*"
+	eventSubject   string = "CONTAINERMETRICS.git"
+	eventConsumer  string = "container-event-consumer"
 )
 
 type NATSContext struct {
@@ -50,7 +50,7 @@ func NewNATSContext(conf *config.Config, dbClient *clickhouse.DBClient) (*NATSCo
 	ctx.stream = stream
 	ctx.Subscribe(eventSubject, eventConsumer, dbClient)
 
-	_, err = stream.StreamInfo("GITMETRICS")
+	_, err = stream.StreamInfo("CONTAINERMETRICS")
 	if err != nil {
 		return nil, err
 	}
