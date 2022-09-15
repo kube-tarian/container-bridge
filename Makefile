@@ -1,36 +1,31 @@
 CLIENT_APP_NAME := container-bridge-client
 AGENT_APP_NAME := container-bridge-agent
-BUILD := 0.0.1
+BUILD := 0.1.1
 
-TOOLS_DIR		:= .tools/
-GOLANGCI_LINT	:= ${TOOLS_DIR}github.com/golangci/golangci-lint/cmd/golangci-lint@v1.46.0
-OAPI_CODEGEN	:= ${TOOLS_DIR}github.com/deepmap/oapi-codegen/cmd/oapi-codegen@latest
-GOIMPORTS		:= ${TOOLS_DIR}mvdan.cc/gofumpt/gofumports@v0.1.1
+OPEN_API_CODEGEN := github.com/deepmap/oapi-codegen/cmd/oapi-codegen@latest
 
-${OAPI_CODEGEN} ${GOLANGCI_LINT} ${GOIMPORTS}:
+${OPEN_API_CODEGEN}:
 	$(eval TOOL=$(@:%=%))
 	@echo Installing ${TOOL}...
-	go install $(TOOL:${TOOLS_DIR}%=%)
-	@mkdir -p $(dir ${TOOL})
-	@cp ${GOBIN}/$(firstword $(subst @, ,$(notdir ${TOOL}))) ${TOOL}
+	go install $(@:%=%)
 
-tools: ${OAPI_CODEGEN} ${GOLANGCI_LINT} ${GOIMPORTS}
+tools: ${OPEN_API_CODEGEN}
 
-OAPI_DIR = ./api
+OPEN_API_DIR = ./api
 
 oapi-gen: tools oapi-gen-agent oapi-gen-client
 
 oapi-gen-agent:
 	$(eval APP_NAME=agent)
 	@echo Generating server for ${APP_NAME}
-	@mkdir -p ${APP_NAME}/${OAPI_DIR}
-	${OAPI_CODEGEN} -config ./${APP_NAME}/cfg.yaml ./${APP_NAME}/openapi.yaml
+	@mkdir -p ${APP_NAME}/${OPEN_API_DIR}
+	${GOBIN}/oapi-codegen -config ./${APP_NAME}/cfg.yaml ./${APP_NAME}/openapi.yaml
 
 oapi-gen-client:
 	$(eval APP_NAME=client)
 	@echo Generating server for ${APP_NAME}
-	@mkdir -p ${APP_NAME}/${OAPI_DIR}
-	${OAPI_CODEGEN} -config ./${APP_NAME}/cfg.yaml ./${APP_NAME}/openapi.yaml
+	@mkdir -p ${APP_NAME}/${OPEN_API_DIR}
+	${GOBIN}/oapi-codegen -config ./${APP_NAME}/cfg.yaml ./${APP_NAME}/openapi.yaml
 
 start-docker-compose:
 	docker compose up -d --no-recreate
