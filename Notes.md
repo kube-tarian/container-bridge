@@ -1,5 +1,16 @@
 # Container brdige
 
+## Chart and docker versioning
+
+The following files to be updated for chart and docker tag versionsing:
+- Makefile -> BUILD parameter
+- charts/agent/Chart.yaml
+- charts/client/Chart.yaml
+- .github/workflows/agent-docker-image.yaml
+- .github/workflows/client-docker-image.yaml
+
+Currently docker images are tagged latest always. Once stabilized versioning can be added to workflow with same version as chart by modifying above 3 files.
+
 ## Start docker compose
 
 ```
