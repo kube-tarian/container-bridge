@@ -1,15 +1,6 @@
 version: '3'
 
 services:
-  docker-registry:
-    image: registry:2
-    ports:
-      - "5001:5000"
-    volumes:
-      - ./docker-registry-config.yaml:/etc/docker/registry/config.yml
-    networks:
-        - ch_ntw
-  
   ch_server:
     image: clickhouse/clickhouse-server:22.6
     ports:
@@ -32,6 +23,7 @@ services:
       - "4222"
     ports:
       - "8222:8222"
+      - "4222:4222"
     networks:
         - ch_ntw
 
@@ -39,45 +31,6 @@ services:
     image: grafana/grafana-enterprise:8.2.0
     ports:
       - 3000:3000
-    networks:
-        - ch_ntw
-
-  agent:
-    entrypoint: "/agent"
-    build:
-      context: ./
-      dockerfile: dockerfiles/agent/Dockerfile
-    restart: always
-    environment:
-      NATS_TOKEN: "UfmrJOYwYCCsgQvxvcfJ3BdI6c8WBbnD"
-      NATS_ADDRESS: "nats://nats:4222"
-      PORT: "8090"
-      STREAM_NAME: "CONTAINERMETRICS"
-    ports:
-      - "8090:8090"
-    # depends_on:
-    #   web:
-    #     condition: service_healthy
-    networks:
-        - ch_ntw
-
-  client:
-    entrypoint: "/client"
-    build:
-      context: ./
-      dockerfile: dockerfiles/client/Dockerfile
-    restart: always
-    environment:
-      NATS_TOKEN: "UfmrJOYwYCCsgQvxvcfJ3BdI6c8WBbnD"
-      NATS_ADDRESS: "nats://nats:4222"
-      DB_ADDRESS: "ch_server:9000"
-      PORT: "8091"
-      STREAM_NAME: "CONTAINERMETRICS"
-    ports:
-      - "8091:8091"
-    # depends_on:
-    #   ch_server:
-    #     condition: service_healthy
     networks:
         - ch_ntw
 

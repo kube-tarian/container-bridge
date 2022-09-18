@@ -16,7 +16,13 @@ type DBClient struct {
 	conf *config.Config
 }
 
-func NewDBClient(conf *config.Config) (*DBClient, error) {
+type DBInterface interface {
+	InsertEvent(event string)
+	FetchEvents() []map[string]interface{}
+	Close()
+}
+
+func NewDBClient(conf *config.Config) (DBInterface, error) {
 	log.Println("Create DB if not exists")
 	conn, err := clickhouse.Open(&clickhouse.Options{
 		Addr: []string{conf.DBAddress},
@@ -86,15 +92,39 @@ func NewDBClient(conf *config.Config) (*DBClient, error) {
 		return nil, err
 	}
 
-	return &DBClient{conn: conn}, nil
+	return &DBClient{conn: conn, conf: conf}, nil
 }
 
-func (c *DBClient) InsertEvent(metrics string) {
-	log.Printf("Inserting event: %v", metrics)
-	insertStmt := fmt.Sprintf("INSERT INTO container_bridge FORMAT JSONAsObject %v", metrics)
+func (c *DBClient) InsertEvent(event string) {
+	log.Printf("Inserting event: %v", event)
+	insertStmt := fmt.Sprintf("INSERT INTO container_bridge FORMAT JSONAsObject %v", event)
 	if err := c.conn.Exec(context.Background(), insertStmt); err != nil {
 		log.Printf("Insert failed, %v", err)
 	}
+}
+
+func (c *DBClient) FetchEvents() []map[string]interface{} {
+	log.Printf("Fetching events")
+	events := []map[string]interface{}{}
+	insertStmt := "select event from container_bridge;"
+	rows, err := c.conn.Query(context.Background(), insertStmt)
+	if err != nil {
+		log.Printf("Insert failed, %v", err)
+	}
+	for rows.Next() {
+		event := map[string]interface{}{}
+		if err := rows.Scan(&event); err != nil {
+			log.Printf("Rows scan failed: %v", err)
+			return events
+		}
+		fmt.Printf("row: event=%v\n", event)
+		events = append(events, event)
+	}
+	rows.Close()
+	if rows.Err() != nil {
+		log.Printf("Fetching rows failed: %v", rows.Err())
+	}
+	return events
 }
 
 func (c *DBClient) Close() {

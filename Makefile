@@ -41,5 +41,11 @@ build:
 clean:
 	rm -rf build
 docker-build:
-	docker build -f Dockerfile.client -t ${CLIENT_APP_NAME}:${BUILD} .
-	docker build -f Dockerfile.agent -t ${AGENT_APP_NAME}:${BUILD} .
+	docker build -f dockerfiles/client/Dockerfile -t ${CLIENT_APP_NAME}:${BUILD} .
+	docker build -f dockerfiles/agent/Dockerfile -t ${AGENT_APP_NAME}:${BUILD} .
+
+start-manual-test:
+	docker compose -f ./docker-compose_manual_test.yaml up -d --no-recreate
+
+stop-manual-test:
+	docker compose -f ./docker-compose_manual_test.yaml down -v

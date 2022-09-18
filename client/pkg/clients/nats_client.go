@@ -23,10 +23,10 @@ type NATSContext struct {
 	conf     *config.Config
 	conn     *nats.Conn
 	stream   nats.JetStreamContext
-	dbClient *clickhouse.DBClient
+	dbClient clickhouse.DBInterface
 }
 
-func NewNATSContext(conf *config.Config, dbClient *clickhouse.DBClient) (*NATSContext, error) {
+func NewNATSContext(conf *config.Config, dbClient clickhouse.DBInterface) (*NATSContext, error) {
 	log.Println("Waiting before connecting to NATS at:", conf.NatsAddress)
 	time.Sleep(1 * time.Second)
 
@@ -72,7 +72,7 @@ func (n *NATSContext) Close() {
 	n.dbClient.Close()
 }
 
-func (n *NATSContext) Subscribe(subject string, consumer string, conn *clickhouse.DBClient) {
+func (n *NATSContext) Subscribe(subject string, consumer string, conn clickhouse.DBInterface) {
 	n.stream.Subscribe(subject, func(msg *nats.Msg) {
 		type events struct {
 			Events []json.RawMessage `json:"events"`
@@ -81,6 +81,7 @@ func (n *NATSContext) Subscribe(subject string, consumer string, conn *clickhous
 		eventDocker := &events{}
 		err := json.Unmarshal(msg.Data, &eventDocker)
 		if err == nil {
+			log.Println(eventDocker)
 			msg.Ack()
 			repoName := msg.Header.Get("REPO_NAME")
 			type newEvent struct {
