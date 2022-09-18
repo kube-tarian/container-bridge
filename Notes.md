@@ -11,17 +11,16 @@ The following files to be updated for chart and docker tag versionsing:
 
 Currently docker images are tagged latest always. Once stabilized versioning can be added to workflow with same version as chart by modifying above 3 files.
 
-## Start docker compose
+## Start docker compose manual test
 
 ```
-export GITLAB_HOME=./gitlab-repo-server
-docker compose up -d
+docker compose -f ./docker-compose_manual_test.yaml up -d
 ```
 
 ## Stop docker compose
 
 ```
-docker compose down -v
+docker compose -f ./docker-compose_manual_test.yaml down -v
 ```
 
 ## Docker registry configuration

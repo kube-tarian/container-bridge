@@ -27,10 +27,11 @@ oapi-gen-client:
 	@mkdir -p ${APP_NAME}/${OPEN_API_DIR}
 	${GOBIN}/oapi-codegen -config ./${APP_NAME}/cfg.yaml ./${APP_NAME}/openapi.yaml
 
-start-docker-compose:
+start-docker-compose-test:
 	docker compose up -d --no-recreate
+	go test -timeout 120s -run ^Test* github.com/kube-tarian/container-bridge/integration_tests -v
 
-stop-docker-compose:
+stop-docker-compose-test:
 	docker compose down -v
 
 build:
