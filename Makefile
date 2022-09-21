@@ -35,9 +35,9 @@ stop-docker-compose-test:
 	docker compose down -v
 
 build:
-	go mod vendor
-	go build -o build/client client/main.go
-	go build -o build/agent agent/main.go
+	go mod download
+	CGO_ENABLED=0 go build -o build/client client/main.go
+	CGO_ENABLED=0 go build -o build/agent agent/main.go
 
 clean:
 	rm -rf build

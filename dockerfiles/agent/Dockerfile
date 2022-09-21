@@ -3,7 +3,7 @@ WORKDIR /
 COPY ./ ./
 
 RUN go mod download
-RUN go build -o ./build/agent agent/main.go
+RUN CGO_ENABLED=0 go build -o ./build/agent agent/main.go
 
 FROM scratch
 COPY --from=builder ./build/agent agent
