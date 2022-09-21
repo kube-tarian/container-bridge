@@ -28,7 +28,7 @@ paths:
         '200':
           description: OK
 
-  /localregistry/event/docker:
+  /event/docker:
     post:
       tags:
         - public
