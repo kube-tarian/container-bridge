@@ -56,6 +56,14 @@ services:
       STREAM_NAME: "CONTAINERMETRICS"
     ports:
       - "8090:8090"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 64M
     # depends_on:
     #   web:
     #     condition: service_healthy
@@ -76,6 +84,14 @@ services:
       STREAM_NAME: "CONTAINERMETRICS"
     ports:
       - "8091:8091"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 64M
     # depends_on:
     #   ch_server:
     #     condition: service_healthy
