@@ -3,7 +3,7 @@ WORKDIR /
 COPY ./ ./
 
 RUN go mod download
-RUN go build -o ./build/client client/main.go
+RUN CGO_ENABLED=0 go build -o ./build/client client/main.go
 
 FROM scratch
 COPY --from=builder ./build/client client

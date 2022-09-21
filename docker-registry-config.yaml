@@ -22,7 +22,7 @@ notifications:
   endpoints:
     - name: container-bridge
       disabled: false
-      url: http://agent:8090/localregistry/event
+      url: http://agent:8090/event/docker
       timeout: 10s
       threshold: 10
       backoff: 1s

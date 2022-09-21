@@ -20,7 +20,7 @@ type Application struct {
 	apiServer  *handler.APIHandler
 	httpServer *http.Server
 	conn       *clients.NATSContext
-	dbClient   *clickhouse.DBClient
+	dbClient   clickhouse.DBInterface
 }
 
 func New() *Application {

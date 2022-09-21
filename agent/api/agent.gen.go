@@ -23,8 +23,8 @@ type ServerInterface interface {
 	// (GET /api-docs)
 	GetApiDocs(w http.ResponseWriter, r *http.Request)
 	// Post Docker artifactory events
-	// (POST /localregistry/event/docker)
-	PostLocalregistryEventDocker(w http.ResponseWriter, r *http.Request)
+	// (POST /event/docker)
+	PostEventDocker(w http.ResponseWriter, r *http.Request)
 	// Kubernetes readiness and liveness probe endpoint
 	// (GET /status)
 	GetStatus(w http.ResponseWriter, r *http.Request)
@@ -54,12 +54,12 @@ func (siw *ServerInterfaceWrapper) GetApiDocs(w http.ResponseWriter, r *http.Req
 	handler(w, r.WithContext(ctx))
 }
 
-// PostLocalregistryEventDocker operation middleware
-func (siw *ServerInterfaceWrapper) PostLocalregistryEventDocker(w http.ResponseWriter, r *http.Request) {
+// PostEventDocker operation middleware
+func (siw *ServerInterfaceWrapper) PostEventDocker(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	var handler = func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PostLocalregistryEventDocker(w, r)
+		siw.Handler.PostEventDocker(w, r)
 	}
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -201,7 +201,7 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 		r.Get(options.BaseURL+"/api-docs", wrapper.GetApiDocs)
 	})
 	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/localregistry/event/docker", wrapper.PostLocalregistryEventDocker)
+		r.Post(options.BaseURL+"/event/docker", wrapper.PostEventDocker)
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/status", wrapper.GetStatus)
@@ -213,13 +213,12 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/5yST2vcTAzGv4rQ2e/aeXvzLTShhAQSur2FHMYz8kbUOxok2bAs/u5lvFBC+peejOB5",
-	"fvrJzBmjHItkym7Yn9cGOY+C/RkTWVQuzpKxx4+SPXAmhUE5HQgeC2X4fLv/AtdPd2CFIo8cwxZv0Nkn",
-	"+nNt/662kNpl39Wu23W4NiiFciiMPX7YdbsrbLAEf62u2IbC/yWJ23Agrx8ppBvtLmGPn8ivC9/USINK",
-	"ViQbbfH/u+7HIx/vcV0btPl4DHrCHh/YHGSsrgZFZeFECYYT+CuBkS4cqV4bDob9M5Z5mDjiS4W0k8Qw",
-	"KR3YXE8tLZS9TRK/ktbFRewnvk9i/vC2d1trN5fWP11QiXABQFDnMUQXPcHmY79yNw8+//a37i+Jv3Gy",
-	"OUYyG+cJvmPeWd7PA2kmJwOlkDiTGYScYOKFtqGoDASUUxHO/tZbeQlOVbwiSesbwv75jLNO2GOL68v6",
-	"LQAA//92GeM35gIAAA==",
+	"H4sIAAAAAAAC/5ySz2obQQyHX0XovLWd9ja30IQSUkioews5zM5oHdH1aJC0C8bsu5dZQynpX3IaBD99",
+	"+jTojEmOVQoVNwznpUMug2A4YyZLytVZCgb8KMUjF1LolfOB4KFSgS+3+69w/XgHVinxwCmu8Q6dfaR/",
+	"t+1ftc2kdpl3tdltdrh0KJVKrIwBP2x2myvssEZ/aa64jZXfZUlrcSBvj1TSlXaXMeAn8uvKNy3SoZJV",
+	"KUZr/P1u9+uSD/e4LB3adDxGPWHAz2wOMjRXg6oyc6YM/Qn8hcBIZ07Uto0Hw/CEdepHTvjcIFuaqfg2",
+	"S/pG2kZVsd8YPor5bUveXIJv0mwQuAAgqvMQk4ueYFWwPwmaR5/++nf7S+J/nGxKicyGaYQfmFeW91NP",
+	"WsjJQClmLmQGsWQYeaa1qCo9AZVchYv/7K08R6cm3pCk7VAwPJ1x0hEDbnF5Xr4HAAD//4PQ6B3LAgAA",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
