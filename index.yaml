@@ -3,6 +3,16 @@ entries:
   agent:
   - apiVersion: v2
     appVersion: 1.16.0
+    created: "2022-09-21T19:27:44.979120026Z"
+    description: A Helm chart for Kubernetes
+    digest: 107d07b7a749693941f4bd28cb475e636c5c15cd0a1dc7329d85fca5bdfb22e6
+    name: agent
+    type: application
+    urls:
+    - https://github.com/kube-tarian/container-bridge/releases/download/agent-0.1.1/agent-0.1.1.tgz
+    version: 0.1.1
+  - apiVersion: v2
+    appVersion: 1.16.0
     created: "2022-09-15T17:31:05.712964764Z"
     description: A Helm chart for Kubernetes
     digest: 5cb1af42aa89151c167c65d33a30fa00a73f93fddf85f8b89b0b58077988b6ee
@@ -12,6 +22,16 @@ entries:
     - https://github.com/kube-tarian/container-bridge/releases/download/agent-0.1.0/agent-0.1.0.tgz
     version: 0.1.0
   client:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2022-09-21T19:27:45.143917313Z"
+    description: A Helm chart for Kubernetes
+    digest: 4133adb7bf5d46be1c61b75d2003ceb58b3ba56cef28f414c6c6ba3692ada0d8
+    name: client
+    type: application
+    urls:
+    - https://github.com/kube-tarian/container-bridge/releases/download/client-0.1.1/client-0.1.1.tgz
+    version: 0.1.1
   - apiVersion: v2
     appVersion: 1.16.0
     created: "2022-09-15T17:31:05.889474702Z"
